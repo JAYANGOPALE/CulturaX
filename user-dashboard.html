@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturaX · User Dashboard</title>
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/pages/dashboard.css" />
+</head>
+
+<body class="page-shell user-dashboard-page">
+  <header>
+    <div class="container nav-bar">
+      <div class="logo">CulturaX</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="login.html">Sign out</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container dashboard-shell">
+    <section class="section">
+      <div class="dashboard-grid">
+        <article class="card reveal">
+          <p class="eyebrow">Welcome</p>
+          <h2>Ready for your next CulturaX journey?</h2>
+          <p class="section-description">
+            Resume your last quiz, explore fresh stories, and keep streaks alive.
+          </p>
+          <button class="btn btn-primary">Start New Quiz</button>
+        </article>
+        <article class="card reveal tilt-card">
+          <h3>Last Activity</h3>
+          <p class="section-description">Loading...</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div id="user-dashboard-root" class="dashboard-react-root"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      CulturaX User Portal · Track progress and unlock stories.
+    </div>
+  </footer>
+
+  <script src="assets/js/animations/particles.js" defer></script>
+  <script src="assets/js/animations/scrollReveal.js" defer></script>
+  <script src="assets/js/animations/tilt.js" defer></script>
+  <script type="module" src="assets/react/entries/user-dashboard-entry.js"></script>
+</body>
+
+</html>
+

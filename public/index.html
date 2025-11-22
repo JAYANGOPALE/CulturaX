@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturaX · Digital Heritage & AR Learning</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body data-page="index">
+  <header class="cx-header">
+    <div class="cx-container cx-nav">
+      <div class="cx-logo">CulturaX</div>
+      <nav class="cx-nav-links">
+        <a href="#hero">Home</a>
+        <a href="#what">Story</a>
+        <a href="#features">Experiences</a>
+        <a href="#impact">Impact</a>
+        <a href="#team">Team</a>
+        <a href="#contact">Contact</a>
+        <div class="cx-auth-menu" id="cxAuthMenu">
+          <button type="button" class="cx-auth-trigger" id="cxAuthTrigger">
+            <span id="cxAuthLabel">Login</span>
+            <span class="cx-auth-indicator"></span>
+          </button>
+          <div class="cx-auth-dropdown">
+            <div class="cx-auth-links" id="cxAuthLoggedOut">
+              <a href="user-login.html">User login</a>
+              <a href="user-signup.html">Create account</a>
+              <a href="admin-login.html">Admin login</a>
+            </div>
+            <button type="button" class="cx-auth-signout" id="globalSignOut" hidden>
+              Sign out
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="hero" class="cx-hero cx-section cx-parallax-root cx-reveal">
+      <div class="cx-container cx-hero-grid">
+        <div class="cx-hero-copy">
+          <p class="cx-eyebrow">Digital heritage for a new generation</p>
+          <h1>Bring India’s monuments to life with CulturaX.</h1>
+          <p class="cx-lead">
+            CulturaX preserves Indian cultural and historical landmarks as
+            rich digital experiences, combining AR, storytelling and
+            interactive learning to reach every learner, anywhere.
+          </p>
+          <div class="cx-hero-actions">
+            <a href="user-login.html" class="cx-btn cx-btn-primary">Start learning</a>
+            <a href="admin-login.html" class="cx-btn cx-btn-ghost">Admin Console</a>
+          </div>
+        </div>
+        <div class="cx-hero-visual cx-parallax-layer" data-depth="0.25">
+          <div class="cx-floating-pill">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="cx-orbit" data-scroll-speed="1.4"></div>
+          <div class="cx-hero-card">
+            <p>Immersive AR tours</p>
+            <p><strong>Scan · Learn · Explore</strong></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- What is CulturaX -->
+    <section id="what" class="cx-section cx-reveal">
+      <div class="cx-container">
+        <header class="cx-section-header">
+          <p class="cx-eyebrow">What is CulturaX?</p>
+          <h2>CulturaX is a digital bridge to India’s heritage.</h2>
+          <p class="cx-section-desc">
+            The platform captures monuments as detailed 3D and AR experiences,
+            wrapping them in guided narratives and quizzes so that students,
+            tourists, and lifelong learners can explore history in an engaging,
+            self-paced way.
+          </p>
+        </header>
+      </div>
+    </section>
+
+    <!-- Problem statement -->
+    <section id="problem" class="cx-section cx-section-alt cx-reveal">
+      <div class="cx-container cx-grid-2">
+        <div>
+          <h2>The problem CulturaX addresses</h2>
+          <p class="cx-section-desc">
+            Many heritage sites face erosion, overcrowding, and uneven access.
+            Classrooms often rely on static images or text, and travel is not
+            always possible for remote communities.
+          </p>
+        </div>
+        <div class="cx-card">
+          <ul class="cx-list">
+            <li>Physical monuments are vulnerable to time, weather, and mass tourism.</li>
+            <li>Students outside major cities rarely get meaningful site visits.</li>
+            <li>Conventional teaching materials struggle to spark curiosity.</li>
+            <li>There is limited infrastructure for digital preservation at scale.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="cx-section cx-reveal">
+      <div class="cx-container">
+        <header class="cx-section-header">
+          <p class="cx-eyebrow">Features</p>
+          <h2>Designed for explorers, educators and administrators.</h2>
+        </header>
+        <div class="cx-grid-3">
+          <article class="cx-card cx-tilt">
+            <h3>AR-powered storytelling</h3>
+            <p>Layer narratives, hotspots and guided tours directly onto 3D monuments.</p>
+          </article>
+          <article class="cx-card cx-tilt">
+            <h3>Quiz-led learning</h3>
+            <p>Reinforce concepts with adaptive quizzes, instant feedback and progression tracking.</p>
+          </article>
+          <article class="cx-card cx-tilt">
+            <h3>Insightful analytics</h3>
+            <p>Understand engagement, visitors, and learning outcomes with live dashboards.</p>
+          </article>
+          <article class="cx-card cx-tilt">
+            <h3>Offline-ready packs</h3>
+            <p>Distribute curated experiences to schools and labs with limited connectivity.</p>
+          </article>
+          <article class="cx-card cx-tilt">
+            <h3>Role-based access</h3>
+            <p>Secure user and admin areas with Firebase Authentication & Firestore roles.</p>
+          </article>
+          <article class="cx-card cx-tilt">
+            <h3>Extensible archive</h3>
+            <p>Continuously add monuments, stories and activities to grow the digital collection.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Experiences -->
+    <section id="experiences" class="cx-section cx-section-alt cx-reveal">
+      <div class="cx-container">
+        <header class="cx-section-header">
+          <p class="cx-eyebrow">Live Capsules</p>
+          <h2>Scan monuments, unlock layered stories, feel the pulse of heritage.</h2>
+          <p class="cx-section-desc">
+            CulturaX blends a tech-forward UI with warm cultural gradients inspired by sandstone and midnight skies.
+            Each experience tile below reacts to your scroll, hinting at the journey that awaits.
+          </p>
+        </header>
+        <div class="cx-grid-3">
+          <article class="cx-card" data-scroll-speed="1.05">
+            <div class="cx-scroll-chip">Featured · Taj Trail</div>
+            <h3>Lens Mode</h3>
+            <p>Point your camera at murals and domes; CulturaX overlays narration, folklore, and 3D reconstructions.</p>
+          </article>
+          <article class="cx-card" data-scroll-speed="0.9">
+            <div class="cx-scroll-chip">Guided Quest</div>
+            <h3>Storywalk</h3>
+            <p>Tap through curated hotspots, unlock Sanskrit whispers, and answer quick-fire questions to earn badges.</p>
+          </article>
+          <article class="cx-card" data-scroll-speed="1.2">
+            <div class="cx-scroll-chip">Community</div>
+            <h3>Festival Drops</h3>
+            <p>During cultural festivals, CulturaX releases special AR filters, ambient sounds, and collaborative quizzes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Impact & Benefits -->
+    <section id="impact" class="cx-section cx-section-alt cx-reveal">
+      <div class="cx-container">
+        <header class="cx-section-header">
+          <p class="cx-eyebrow">Impact & Benefits</p>
+          <h2>How CulturaX creates lasting value.</h2>
+        </header>
+
+        <div class="cx-impact-grid">
+          <!-- Cultural Impact -->
+          <article class="cx-card cx-tilt">
+            <h3>Cultural Impact</h3>
+            <ul class="cx-list">
+              <li>Digitally preserves Indian monuments in high fidelity for future generations.</li>
+              <li>Reduces the risk of heritage loss from erosion, damage, climate and age.</li>
+              <li>Extends cultural awareness and curiosity across younger audiences.</li>
+            </ul>
+          </article>
+
+          <!-- Educational Impact -->
+          <article class="cx-card cx-tilt">
+            <h3>Educational Impact</h3>
+            <ul class="cx-list">
+              <li>Delivers interactive, AR-based learning experiences for schools and colleges.</li>
+              <li>Makes history memorable through 3D visuals, narratives and interactive quizzes.</li>
+              <li>Provides rich learning content to remote communities without travel barriers.</li>
+            </ul>
+          </article>
+
+          <!-- Technological Impact -->
+          <article class="cx-card cx-tilt">
+            <h3>Technological Impact</h3>
+            <ul class="cx-list">
+              <li>Introduces learners to STEM concepts through AR, 3D modelling and real-time graphics.</li>
+              <li>Opens up new career paths in digital heritage, scanning, AR and content design.</li>
+              <li>Encourages the adoption of immersive technologies in mainstream education.</li>
+            </ul>
+          </article>
+
+          <!-- Tourism Impact -->
+          <article class="cx-card cx-tilt">
+            <h3>Tourism Impact</h3>
+            <ul class="cx-list">
+              <li>Enhances on-site visits with AR overlays and contextual storytelling.</li>
+              <li>Acts as a virtual tourism gateway for audiences who cannot travel in person.</li>
+              <li>Strengthens cultural tourism through high-quality digital outreach.</li>
+            </ul>
+          </article>
+
+          <!-- Social Impact -->
+          <article class="cx-card cx-tilt">
+            <h3>Social Impact</h3>
+            <ul class="cx-list">
+              <li>Makes India’s cultural heritage accessible to anyone, anywhere in the world.</li>
+              <li>Builds a sense of pride and connection with historical identity.</li>
+              <li>Promotes digital inclusion by reaching learners across diverse regions.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section id="team" class="cx-section cx-section-alt cx-reveal">
+      <div class="cx-container">
+        <header class="cx-section-header">
+          <p class="cx-eyebrow">Team</p>
+          <h2>The people behind CulturaX.</h2>
+        </header>
+
+        <div class="cx-grid-team">
+          <article class="cx-card cx-tilt cx-team-card">
+            <div class="cx-team-photo">
+              <img src="img/team/member-1.jpg" alt="Portrait of Jayan Gopale" />
+            </div>
+            <div class="cx-team-meta">
+              <h3>Jayan Gopale</h3>
+              <p class="cx-team-role">Founder & Product Lead</p>
+            </div>
+            <p class="cx-team-bio">
+              Leads CulturaX vision, product and partnerships. Previously built AR
+              learning experiences for museums across India.
+            </p>
+            <div class="cx-team-links">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.18 8h4.66v13.94H.18V8zM8.59 8h4.47v1.93h.06c.62-1.18 2.13-2.43 4.38-2.43 4.68 0 5.54 3.08 5.54 7.09v8.35h-4.66v-7.39c0-1.76-.03-4.03-2.46-4.03-2.46 0-2.84 1.92-2.84 3.9v7.52H8.59V8z"/></svg>
+              </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.94.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.73-1.3-1.73-1.07-.74.08-.73.08-.73 1.18.08 1.8 1.22 1.8 1.22 1.05 1.8 2.76 1.28 3.43.98.11-.76.41-1.28.75-1.58-2.55-.29-5.23-1.28-5.23-5.71 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.45.11-3.02 0 0 .98-.31 3.2 1.19a11.06 11.06 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.57.23 2.73.11 3.02.75.81 1.2 1.85 1.2 3.11 0 4.44-2.69 5.42-5.24 5.71.42.36.8 1.09.8 2.2 0 1.59-.02 2.88-.02 3.28 0 .31.21.68.8.56A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </article>
+          <article class="cx-card cx-tilt cx-team-card">
+            <div class="cx-team-photo">
+              <img src="img/team/member-2.jpg" alt="Portrait of Priya Sharma" />
+            </div>
+            <div class="cx-team-meta">
+              <h3>Priya Sharma</h3>
+              <p class="cx-team-role">Design Director</p>
+            </div>
+            <p class="cx-team-bio">
+              Designs the CulturaX visual language and ensures the platform stays
+              elegant, accessible and culturally grounded.
+            </p>
+            <div class="cx-team-links">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.18 8h4.66v13.94H.18V8zM8.59 8h4.47v1.93h.06c.62-1.18 2.13-2.43 4.38-2.43 4.68 0 5.54 3.08 5.54 7.09v8.35h-4.66v-7.39c0-1.76-.03-4.03-2.46-4.03-2.46 0-2.84 1.92-2.84 3.9v7.52H8.59V8z"/></svg>
+              </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.94.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.73-1.3-1.73-1.07-.74.08-.73.08-.73 1.18.08 1.8 1.22 1.8 1.22 1.05 1.8 2.76 1.28 3.43.98.11-.76.41-1.28.75-1.58-2.55-.29-5.23-1.28-5.23-5.71 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.45.11-3.02 0 0 .98-.31 3.2 1.19a11.06 11.06 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.57.23 2.73.11 3.02.75.81 1.2 1.85 1.2 3.11 0 4.44-2.69 5.42-5.24 5.71.42.36.8 1.09.8 2.2 0 1.59-.02 2.88-.02 3.28 0 .31.21.68.8.56A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </article>
+          <article class="cx-card cx-tilt cx-team-card">
+            <div class="cx-team-photo">
+              <img src="img/team/member-3.jpg" alt="Portrait of Aarav Desai" />
+            </div>
+            <div class="cx-team-meta">
+              <h3>Aarav Desai</h3>
+              <p class="cx-team-role">Engineering Lead</p>
+            </div>
+            <p class="cx-team-bio">
+              Owns CulturaX architecture, Firebase integrations and immersive
+              rendering features with a focus on performance.
+            </p>
+            <div class="cx-team-links">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.18 8h4.66v13.94H.18V8zM8.59 8h4.47v1.93h.06c.62-1.18 2.13-2.43 4.38-2.43 4.68 0 5.54 3.08 5.54 7.09v8.35h-4.66v-7.39c0-1.76-.03-4.03-2.46-4.03-2.46 0-2.84 1.92-2.84 3.9v7.52H8.59V8z"/></svg>
+              </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.94.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.73-1.3-1.73-1.07-.74.08-.73.08-.73 1.18.08 1.8 1.22 1.8 1.22 1.05 1.8 2.76 1.28 3.43.98.11-.76.41-1.28.75-1.58-2.55-.29-5.23-1.28-5.23-5.71 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.45.11-3.02 0 0 .98-.31 3.2 1.19a11.06 11.06 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.57.23 2.73.11 3.02.75.81 1.2 1.85 1.2 3.11 0 4.44-2.69 5.42-5.24 5.71.42.36.8 1.09.8 2.2 0 1.59-.02 2.88-.02 3.28 0 .31.21.68.8.56A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </article>
+          <article class="cx-card cx-tilt cx-team-card">
+            <div class="cx-team-photo">
+              <img src="img/team/member-4.jpg" alt="Portrait of Meera Patel" />
+            </div>
+            <div class="cx-team-meta">
+              <h3>Meera Patel</h3>
+              <p class="cx-team-role">Heritage Researcher</p>
+            </div>
+            <p class="cx-team-bio">
+              Curates monument histories, scripts narratives and ensures every
+              CulturaX experience is rooted in fact.
+            </p>
+            <div class="cx-team-links">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.18 8h4.66v13.94H.18V8zM8.59 8h4.47v1.93h.06c.62-1.18 2.13-2.43 4.38-2.43 4.68 0 5.54 3.08 5.54 7.09v8.35h-4.66v-7.39c0-1.76-.03-4.03-2.46-4.03-2.46 0-2.84 1.92-2.84 3.9v7.52H8.59V8z"/></svg>
+              </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.94.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.73-1.3-1.73-1.07-.74.08-.73.08-.73 1.18.08 1.8 1.22 1.8 1.22 1.05 1.8 2.76 1.28 3.43.98.11-.76.41-1.28.75-1.58-2.55-.29-5.23-1.28-5.23-5.71 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.45.11-3.02 0 0 .98-.31 3.2 1.19a11.06 11.06 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.57.23 2.73.11 3.02.75.81 1.2 1.85 1.2 3.11 0 4.44-2.69 5.42-5.24 5.71.42.36.8 1.09.8 2.2 0 1.59-.02 2.88-.02 3.28 0 .31.21.68.8.56A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </article>
+          <article class="cx-card cx-tilt cx-team-card">
+            <div class="cx-team-photo">
+              <img src="img/team/member-5.jpg" alt="Portrait of Rahul Bhatia" />
+            </div>
+            <div class="cx-team-meta">
+              <h3>Rahul Bhatia</h3>
+              <p class="cx-team-role">Growth & Community</p>
+            </div>
+            <p class="cx-team-bio">
+              Runs educator programs, community pilots and ensures learners keep
+              discovering CulturaX content.
+            </p>
+            <div class="cx-team-links">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.18 8h4.66v13.94H.18V8zM8.59 8h4.47v1.93h.06c.62-1.18 2.13-2.43 4.38-2.43 4.68 0 5.54 3.08 5.54 7.09v8.35h-4.66v-7.39c0-1.76-.03-4.03-2.46-4.03-2.46 0-2.84 1.92-2.84 3.9v7.52H8.59V8z"/></svg>
+              </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.94.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.73-1.3-1.73-1.07-.74.08-.73.08-.73 1.18.08 1.8 1.22 1.8 1.22 1.05 1.8 2.76 1.28 3.43.98.11-.76.41-1.28.75-1.58-2.55-.29-5.23-1.28-5.23-5.71 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.45.11-3.02 0 0 .98-.31 3.2 1.19a11.06 11.06 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.57.23 2.73.11 3.02.75.81 1.2 1.85 1.2 3.11 0 4.44-2.69 5.42-5.24 5.71.42.36.8 1.09.8 2.2 0 1.59-.02 2.88-.02 3.28 0 .31.21.68.8.56A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </article>
+          <article class="cx-card cx-tilt cx-team-card">
+            <div class="cx-team-photo">
+              <img src="img/team/member-6.jpg" alt="Portrait of Sana Ahmed" />
+            </div>
+            <div class="cx-team-meta">
+              <h3>Sana Ahmed</h3>
+              <p class="cx-team-role">XR Experience Designer</p>
+            </div>
+            <p class="cx-team-bio">
+              Builds immersive scenes, motion systems and quiz interactions with a
+              focus on “wow” without compromising usability.
+            </p>
+            <div class="cx-team-links">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.18 8h4.66v13.94H.18V8zM8.59 8h4.47v1.93h.06c.62-1.18 2.13-2.43 4.38-2.43 4.68 0 5.54 3.08 5.54 7.09v8.35h-4.66v-7.39c0-1.76-.03-4.03-2.46-4.03-2.46 0-2.84 1.92-2.84 3.9v7.52H8.59V8z"/></svg>
+              </a>
+              <a href="https://github.com/" target="_blank" rel="noreferrer" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.4 7.86 10.94.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.36-1.3-1.73-1.3-1.73-1.07-.74.08-.73.08-.73 1.18.08 1.8 1.22 1.8 1.22 1.05 1.8 2.76 1.28 3.43.98.11-.76.41-1.28.75-1.58-2.55-.29-5.23-1.28-5.23-5.71 0-1.26.45-2.3 1.2-3.11-.12-.29-.52-1.45.11-3.02 0 0 .98-.31 3.2 1.19a11.06 11.06 0 0 1 5.82 0c2.22-1.5 3.2-1.19 3.2-1.19.63 1.57.23 2.73.11 3.02.75.81 1.2 1.85 1.2 3.11 0 4.44-2.69 5.42-5.24 5.71.42.36.8 1.09.8 2.2 0 1.59-.02 2.88-.02 3.28 0 .31.21.68.8.56A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="cx-section cx-reveal">
+      <div class="cx-container">
+        <div class="cx-card cx-contact-card">
+          <h2>Partner with CulturaX.</h2>
+          <p class="cx-section-desc">
+            Collaborate on pilots, content, curriculum integration or tourism
+            experiences. We’d love to hear from you.
+          </p>
+          <a href="mailto:hello@culturax.in" class="cx-btn cx-btn-primary">
+            hello@culturax.in
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="cx-footer">
+    <div class="cx-container">
+      <p>© 2025 CulturaX · Digital Heritage & AR Learning Platform.</p>
+    </div>
+  </footer>
+
+  <div class="cx-particles" id="cx-particles"></div>
+
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/analytics.js"></script>
+  <script src="js/ui.js" defer></script>
+</body>
+
+</html>
+
+

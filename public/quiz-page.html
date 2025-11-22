@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturaX · Quiz</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body data-page="quiz-page">
+  <header class="cx-header">
+    <div class="cx-container cx-nav">
+      <div class="cx-logo">CulturaX Quiz</div>
+      <nav class="cx-nav-links">
+        <a href="user-dashboard.html">Dashboard</a>
+        <a href="index.html">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="cx-section">
+    <div class="cx-container cx-reveal">
+      <article class="cx-card" id="quizContainer">
+        <header class="cx-quiz-header">
+          <h1 id="quizTitle">Quiz</h1>
+          <div class="cx-quiz-meta">
+            <span id="quizProgress"></span>
+            <span id="quizTimer"></span>
+          </div>
+        </header>
+        <div id="quizBody"></div>
+        <footer class="cx-quiz-footer">
+          <button id="quizNext" class="cx-btn cx-btn-primary">Start</button>
+        </footer>
+      </article>
+    </div>
+  </main>
+
+  <footer class="cx-footer">
+    <div class="cx-container">
+      <p>CulturaX Quiz Engine</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/analytics.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/quiz.js"></script>
+  <script src="js/ui.js" defer></script>
+</body>
+
+</html>
+
+

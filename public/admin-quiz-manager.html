@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturaX · Quiz Manager</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body data-page="admin-quiz-manager">
+  <header class="cx-header">
+    <div class="cx-container cx-nav">
+      <div class="cx-logo">CulturaX Admin</div>
+      <nav class="cx-nav-links">
+        <a href="admin-dashboard.html">Dashboard</a>
+        <button id="adminSignOut2" class="cx-link-button">Sign out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="cx-section">
+    <div class="cx-container cx-reveal">
+      <section class="cx-quiz-builder">
+        <article class="cx-card cx-quiz-list-panel">
+          <header class="cx-quiz-list-header">
+            <div>
+              <p class="cx-eyebrow">Library</p>
+              <h2>Existing quizzes</h2>
+            </div>
+            <button type="button" id="newQuizBtn" class="cx-btn cx-btn-ghost">
+              + New quiz
+            </button>
+          </header>
+          <ul id="quizList" class="cx-quiz-list"></ul>
+        </article>
+
+        <article class="cx-card cx-quiz-editor-panel">
+          <header class="cx-quiz-editor-header">
+            <div>
+              <p class="cx-eyebrow">Quiz builder</p>
+              <h1 id="builderTitle">Untitled quiz</h1>
+            </div>
+            <div class="cx-quiz-editor-actions">
+              <button type="button" id="deleteQuiz" class="cx-btn cx-btn-ghost cx-btn-danger-outline">
+                Delete
+              </button>
+              <button type="button" id="saveQuizBtn" class="cx-btn cx-btn-primary">
+                Save quiz
+              </button>
+            </div>
+          </header>
+
+          <form id="quizForm" class="cx-quiz-form" autocomplete="off">
+            <label class="cx-field">
+              Quiz title
+              <input type="text" id="quizTitleInput" placeholder="Eg. Taj Mahal Discovery Quiz" required />
+            </label>
+            <label class="cx-field">
+              Description
+              <textarea id="quizDescriptionInput" rows="3" placeholder="What should learners expect from this quiz?"></textarea>
+            </label>
+            <div class="cx-field-grid">
+              <label class="cx-field">
+                Category
+                <input type="text" id="quizCategoryInput" placeholder="History, Architecture..." />
+              </label>
+              <label class="cx-field">
+                Difficulty
+                <select id="quizDifficultyInput">
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="cx-question-stack" id="quizQuestionStack"></div>
+
+            <div class="cx-question-toolbar">
+              <button type="button" id="addQuestionBtn" class="cx-btn cx-btn-ghost">
+                + Add question
+              </button>
+            </div>
+            <p id="quizEditorMessage" class="cx-form-message" aria-live="polite"></p>
+          </form>
+        </article>
+      </section>
+    </div>
+  </main>
+
+  <footer class="cx-footer">
+    <div class="cx-container">
+      <p>CulturaX Quiz Management</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/firebase-init.js"></script>
+  <script type="module" src="js/analytics.js"></script>
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/admin.js"></script>
+  <script src="js/ui.js" defer></script>
+</body>
+
+</html>
+
+

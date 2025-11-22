@@ -1,0 +1,76 @@
+.login-page .login-main {
+  min-height: calc(100vh - 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+}
+
+.glass-card {
+  width: min(520px, 100%);
+  padding: 3rem;
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  box-shadow: var(--shadow-soft);
+}
+
+.login-tabs {
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  background: rgba(202, 168, 81, 0.12);
+  padding: 0.25rem;
+  margin: 2rem 0 1.5rem;
+}
+
+.login-tab {
+  border: none;
+  background: transparent;
+  padding: 0.65rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.login-tab.active {
+  background: #fff;
+  color: var(--accent-strong);
+}
+
+.login-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.login-form label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+}
+
+.login-form input,
+.login-form select {
+  width: 100%;
+  padding: 0.85rem;
+  border-radius: 16px;
+  border: 1px solid rgba(9, 10, 15, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+}
+
+.login-form button {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.login-meta {
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+

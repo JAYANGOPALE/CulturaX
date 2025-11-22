@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturaX · Admin Dashboard</title>
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/pages/admin.css" />
+</head>
+
+<body class="page-shell admin-dashboard-page">
+  <header>
+    <div class="container nav-bar">
+      <div class="logo">CulturaX Admin</div>
+      <nav class="nav-links">
+        <a href="index.html">Site</a>
+        <a href="user-dashboard.html">Users</a>
+        <a href="quiz.html">Quiz</a>
+        <a href="login.html">Sign out</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container admin-shell">
+    <section class="section">
+      <div class="section-header">
+        <p class="eyebrow">Admin</p>
+        <h1 class="section-title">Create quizzes & track impact</h1>
+        <p class="section-description">
+          Add questions, manage attempts, and review visits in real time using React-powered islands.
+        </p>
+      </div>
+      <div class="admin-tabs card">
+        <button data-target="admin-quiz-root" class="admin-tab active">Add Quiz</button>
+        <button data-target="admin-analytics-root" class="admin-tab">Analytics</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div id="admin-quiz-root" class="admin-panel active-panel" aria-live="polite"></div>
+      <div id="admin-analytics-root" class="admin-panel" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      CulturaX Admin Console · Powered by Firebase & Chart.js
+    </div>
+  </footer>
+
+  <script src="assets/js/animations/particles.js" defer></script>
+  <script src="assets/js/animations/scrollReveal.js" defer></script>
+  <script src="assets/js/animations/tilt.js" defer></script>
+  <script src="assets/js/admin-tabs.js" defer></script>
+  <script type="module" src="assets/react/entries/admin-dashboard-entry.js"></script>
+</body>
+
+</html>
+

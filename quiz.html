@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CulturaX · Quiz</title>
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/pages/quiz.css" />
+</head>
+
+<body class="page-shell quiz-page">
+  <header>
+    <div class="container nav-bar">
+      <div class="logo">CulturaX Quiz</div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="user-dashboard.html">Dashboard</a>
+        <a href="login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container quiz-shell">
+    <section class="section">
+      <div class="section-header">
+        <p class="eyebrow">Live Quiz</p>
+        <h1 class="section-title">Immersive Learning Challenge</h1>
+        <p class="section-description">
+          Answer time-bound questions, gain instant feedback, and store your performance securely.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div id="quiz-root" class="quiz-react-root"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">CulturaX Quiz Engine · React enhanced.</div>
+  </footer>
+
+  <script src="assets/js/animations/particles.js" defer></script>
+  <script src="assets/js/animations/scrollReveal.js" defer></script>
+  <script type="module" src="assets/react/entries/quiz-entry.js"></script>
+</body>
+
+</html>
+
