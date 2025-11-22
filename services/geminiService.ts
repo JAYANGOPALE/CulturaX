@@ -3,8 +3,13 @@ import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
 // Initialize Gemini Client
-// @ts-ignore - Process env handling
-const apiKey = process.env.API_KEY || '';
+// Use import.meta.env for Vite environment variables
+const apiKey = import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || '';
+
+if (!apiKey) {
+  console.error("API Key is missing. Please check your .env file and ensure VITE_API_KEY or VITE_GEMINI_API_KEY is set.");
+}
+
 const ai = new GoogleGenAI({ apiKey });
 
 /**

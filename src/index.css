@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth theme transition */
+body {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+}
+.dark ::-webkit-scrollbar-track {
+  background: #111;
+}
+::-webkit-scrollbar-thumb {
+  background: #8b7355; /* Heritage Brownish */
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #FACC15; /* Tech Yellow */
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C19A6B;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #FFD700; /* Gold */
+}
+
+/* Tech Grid Background for global reuse - Dark Mode (Yellow Grid) */
+.tech-bg {
+  background-color: #000000;
+  background-image: 
+    linear-gradient(rgba(250, 204, 21, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(250, 204, 21, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Paper Texture for Light Mode */
+.heritage-bg {
+  background-color: #F9F5EB;
+  background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+}
+
