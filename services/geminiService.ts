@@ -2,10 +2,9 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
-// Helper to safely get API Key from environment variables
+// Helper to safely get API Key from environment variables ONLY
+// NO hardcoded keys - must be set in environment variables
 const getApiKey = (): string => {
-  const FALLBACK_KEY = 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
-  
   // 1. Primary: Check Vite environment variable VITE_GEMINI_API_KEY (from .env file or deployment env vars)
   if (typeof import.meta !== 'undefined' && import.meta.env) {
     const viteKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -25,7 +24,6 @@ const getApiKey = (): string => {
     console.log('🔍 Environment check:', {
       hasViteKey: !!viteKey,
       viteKeyType: typeof viteKey,
-      viteKeyValue: viteKey ? viteKey.substring(0, 10) + '...' : 'undefined',
       hasLegacyKey: !!legacyKey,
       legacyKeyType: typeof legacyKey
     });
@@ -52,10 +50,12 @@ const getApiKey = (): string => {
     // process is not available in browser environment
   }
 
-  // 4. Final fallback: Hardcoded key (always use this if env vars not found)
-  console.warn('⚠️ Using fallback API key. Environment variable VITE_GEMINI_API_KEY not found.');
-  console.log('💡 To fix: Set VITE_GEMINI_API_KEY in Vercel dashboard → Settings → Environment Variables');
-  return FALLBACK_KEY;
+  // NO FALLBACK - Environment variable is required
+  console.error('❌ VITE_GEMINI_API_KEY environment variable is missing!');
+  console.error('💡 Please set VITE_GEMINI_API_KEY in:');
+  console.error('   - Local: .env file in project root');
+  console.error('   - Vercel: Settings → Environment Variables');
+  throw new Error('VITE_GEMINI_API_KEY environment variable is required. Please set it in your .env file (local) or Vercel dashboard (deployment).');
 };
 
 // Create AI instance dynamically to ensure fresh API key on each call
@@ -215,18 +215,28 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
     const errorMessage = error?.message || '';
     const errorCode = error?.code || '';
     const errorStatus = error?.status || error?.statusCode || '';
+    const errorString = JSON.stringify(error?.message || error || '');
+    
+    // Check for leaked API key error (most common issue)
+    if (errorMessage.includes('leaked') || 
+        errorString.includes('leaked') ||
+        errorMessage.includes('reported as leaked')) {
+      console.error('❌ API Key was reported as leaked by Google');
+      throw new Error('Your API key was reported as leaked and has been disabled by Google. Please generate a NEW API key at https://aistudio.google.com/apikey and update VITE_GEMINI_API_KEY in Vercel.');
+    }
     
     // API authentication errors
     if (errorMessage.includes('API key') || 
         errorMessage.includes('401') || 
         errorMessage.includes('403') ||
         errorMessage.includes('UNAUTHENTICATED') ||
+        errorMessage.includes('PERMISSION_DENIED') ||
         errorCode === '401' || 
         errorCode === '403' ||
         errorStatus === 401 ||
         errorStatus === 403) {
-      console.error('❌ API Authentication Error - Key may be invalid or missing');
-      throw new Error('Invalid or missing Gemini API key. Please check your VITE_GEMINI_API_KEY environment variable in Vercel dashboard.');
+      console.error('❌ API Authentication Error - Key may be invalid, missing, or disabled');
+      throw new Error('Invalid or missing Gemini API key. Please generate a new key at https://aistudio.google.com/apikey and set VITE_GEMINI_API_KEY in Vercel dashboard.');
     }
     
     // Quota/billing errors

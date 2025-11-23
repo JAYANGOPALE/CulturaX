@@ -19,7 +19,7 @@ You're seeing: "Invalid or missing Gemini API key. Please check your VITE_GEMINI
 3. **Add the Variable**
    - Click **Add New**
    - **Key**: `VITE_GEMINI_API_KEY`
-   - **Value**: `AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo`
+   - **Value**: Your Gemini API key (get it from https://aistudio.google.com/apikey)
    - **Environment**: Select **ALL** (Production, Preview, Development)
    - Click **Save**
 
@@ -82,7 +82,7 @@ console.log('API Key:', import.meta.env.VITE_GEMINI_API_KEY);
 ## 📝 Quick Checklist
 
 - [ ] Environment variable `VITE_GEMINI_API_KEY` added in Vercel
-- [ ] Variable value is correct: `AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo`
+- [ ] Variable value is set with a valid API key from https://aistudio.google.com/apikey
 - [ ] Variable set for ALL environments (Production, Preview, Development)
 - [ ] App redeployed after adding variable
 - [ ] Build cache was cleared during redeploy

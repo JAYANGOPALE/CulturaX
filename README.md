@@ -147,7 +147,7 @@ CulturaX/
    - In your Vercel project dashboard, go to **Settings** → **Environment Variables**
    - Add a new variable:
      - **Name**: `VITE_GEMINI_API_KEY`
-     - **Value**: Your Gemini API key (`AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo`)
+     - **Value**: Your Gemini API key (get it from https://aistudio.google.com/apikey)
      - **Environment**: Select all (Production, Preview, Development)
    - Click **Save**
 
