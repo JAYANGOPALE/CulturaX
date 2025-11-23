@@ -4,39 +4,54 @@ import { QuizQuestion } from "../types";
 
 // Helper to safely get API Key from environment variables
 const getApiKey = (): string => {
-  // 1. Primary: Check Vite environment variable VITE_GEMINI_API_KEY (from .env file)
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) {
-    return import.meta.env.VITE_GEMINI_API_KEY;
-  }
-
-  // 2. Fallback: Check for VITE_API_KEY (legacy support)
-  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
-    return import.meta.env.VITE_API_KEY;
+  // 1. Primary: Check Vite environment variable VITE_GEMINI_API_KEY (from .env file or deployment env vars)
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    const viteKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (viteKey && viteKey.trim() !== '') {
+      console.log('Using VITE_GEMINI_API_KEY from environment');
+      return viteKey;
+    }
+    
+    // 2. Fallback: Check for VITE_API_KEY (legacy support)
+    const legacyKey = import.meta.env.VITE_API_KEY;
+    if (legacyKey && legacyKey.trim() !== '') {
+      console.log('Using VITE_API_KEY from environment');
+      return legacyKey;
+    }
   }
 
   // 3. Fallback: Check Node/Process environment (for server-side usage)
   try {
     // @ts-ignore - process may not be available in browser environment
-    if (typeof process !== 'undefined' && process?.env?.VITE_GEMINI_API_KEY) {
+    if (typeof process !== 'undefined' && process?.env) {
       // @ts-ignore
-      return process.env.VITE_GEMINI_API_KEY;
-    }
-    // @ts-ignore
-    if (typeof process !== 'undefined' && process?.env?.API_KEY) {
+      if (process.env.VITE_GEMINI_API_KEY && process.env.VITE_GEMINI_API_KEY.trim() !== '') {
+        // @ts-ignore
+        return process.env.VITE_GEMINI_API_KEY;
+      }
       // @ts-ignore
-      return process.env.API_KEY;
+      if (process.env.API_KEY && process.env.API_KEY.trim() !== '') {
+        // @ts-ignore
+        return process.env.API_KEY;
+      }
     }
   } catch (e) {
     // process is not available in browser environment
   }
 
-  // 4. Final fallback: Hardcoded key (should not be needed if .env is configured)
-  console.warn('Warning: Using fallback API key. Please set VITE_GEMINI_API_KEY in your .env file.');
+  // 4. Final fallback: Hardcoded key
+  console.warn('Warning: Using fallback API key. Please set VITE_GEMINI_API_KEY in your environment variables.');
   return 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
 };
 
-const apiKey = getApiKey();
-const ai = new GoogleGenAI({ apiKey });
+// Create AI instance dynamically to ensure fresh API key on each call
+const getAI = (): GoogleGenAI => {
+  const apiKey = getApiKey();
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error('Gemini API key is missing. Please set VITE_GEMINI_API_KEY in your environment variables.');
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 /**
  * Generates a kid-friendly caption based on the scenario in the specified language.
