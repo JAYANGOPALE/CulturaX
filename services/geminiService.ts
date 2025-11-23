@@ -1,60 +1,26 @@
+
+import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
-// Use import.meta.env for Vite environment variables
-const apiKey = import.meta.env.VITE_API_KEY || import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
-
-if (!apiKey) {
-  console.error("API Key is missing. Please check your .env file and ensure VITE_API_KEY or VITE_GEMINI_API_KEY is set.");
-}
-
-// Base URL for Gemini API
-const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
-
-/**
- * Helper function to make API calls to Gemini REST API
- */
-async function callGeminiAPI(model: string, requestBody: any): Promise<any> {
-  const url = `${GEMINI_API_BASE}/${model}:generateContent?key=${apiKey}`;
-  
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(`Gemini API error: ${response.status} - ${JSON.stringify(errorData)}`);
-  }
-
-  return await response.json();
-}
+// Initialize Gemini Client
+// @ts-ignore - Process env handling
+// Using provided key as fallback if env var is not set
+const apiKey = process.env.API_KEY || 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
+const ai = new GoogleGenAI({ apiKey });
 
 /**
  * Generates a kid-friendly caption based on the scenario in the specified language.
  */
 export const generateCaption = async (scenario: string, language: string): Promise<string> => {
   try {
-    const prompt = `You are a friendly teacher teaching children about civic sense at heritage sites and tourist places. 
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `You are a friendly teacher teaching children about civic sense at heritage sites and tourist places. 
       Target Language: ${language}.
       Based on this scenario: "${scenario}", write a very short, catchy, and rhyming caption in ${language} (max 10 words) that teaches a lesson (e.g., Don't litter, Keep it quiet). 
-      Make it fun for kids. Output ONLY the caption.`;
-
-    const requestBody = {
-      contents: [{
-        parts: [{
-          text: prompt
-        }]
-      }]
-    };
-
-    const response = await callGeminiAPI('gemini-2.0-flash', requestBody);
-    
-    // Extract text from response
-    const text = response.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    return text || "Let's protect our heritage together!";
+      Make it fun for kids. Output ONLY the caption.`,
+    });
+    return response.text?.trim() || "Let's protect our heritage together!";
   } catch (error) {
     console.error("Caption generation error:", error);
     return "Protect our history!";
@@ -66,43 +32,65 @@ export const generateCaption = async (scenario: string, language: string): Promi
  */
 export const generateImagePanel = async (scenario: string, caption: string, language: string): Promise<string | null> => {
   try {
-    // Use gemini-2.0-flash-exp for image generation capabilities
-    const model = 'gemini-2.0-flash-exp';
+    // Using 'gemini-2.5-flash-image' (Nano Banana) as requested for free API access.
+    // This model is reliable and generally does not require a billing project like gemini-3-pro.
+    const model = 'gemini-2.5-flash-image';
     
+    // Clean up language label to ensure the model understands the target script clearly
+    // e.g. "हिंदी (Hindi)" -> "Hindi"
+    const languageName = language.split('(')[1]?.replace(')', '').trim() || language.split('(')[0].trim();
+
     const prompt = `
-      Create a complete 4-panel comic strip (2x2 grid layout) illustration in 16:9 aspect ratio.
-      Style: Indian heritage watercolor-ink style with fine ink outlines and soft, bleeding washes.
-      Subject: A story about ${scenario} teaching a civic sense lesson.
-      Layout: 
-      - Divide the image into 4 clear distinct panels.
-      - Panel 1: Show the initial action (e.g., someone doing something wrong or starting a journey).
-      - Panel 2: Show the reaction or consequence of the action.
-      - Panel 3: Show a wise character (like a heritage guardian or elder) explaining the right thing to do.
-      - Panel 4: Show the happy resolution with everyone doing the right thing.
-      Text Integration: 
-      - The text must be in ${language}.
-      - Include speech bubbles with simple dialogue in ${language} in the panels.
-      - Include the main caption "${caption}" prominently, either as a title or in the final panel.
-      Atmosphere: Educational, cultural, vibrant but soft watercolor.
-      Characters: Indian styling, friendly expressions.
+      Create a visually stunning, masterpiece-quality 4-panel comic strip (2x2 grid layout).
+      
+      **Visual Style:**
+      - Style: High-fidelity Indian heritage watercolor illustration with fine ink detailing.
+      - Resolution: High definition, sharp focus.
+      - Color Palette: Rich, vibrant, and warm tones suitable for Indian cultural settings.
+      - Composition: Professional cinematic angles for each panel.
+      
+      **Story Scenario:**
+      A short story depicting: "${scenario}" which teaches a civic sense lesson.
+      
+      **Panel Breakdown:**
+      1. **The Incident:** Depict the initial action or problem clearly.
+      2. **The Reaction:** Show the immediate consequence or emotional reaction.
+      3. **The Guidance:** A character explaining the right thing to do (civic sense).
+      4. **The Solution:** A happy resolution showing the positive outcome.
+
+      **CRITICAL TEXT & LANGUAGE INSTRUCTIONS:**
+      - **Target Language:** **${languageName}**
+      - **Speech Bubbles:** Generate speech bubbles with dialogue written in the **${languageName}** script.
+      - **Strict Constraint:** Do NOT use English text inside the image if the target language is ${languageName} (unless ${languageName} is English).
+      - **Legibility:** Ensure the characters are formed correctly, legible, and clear.
+      - **Caption:** Integrate the caption "${caption}" artistically in the final panel (in ${languageName}).
+
+      **Negative Constraints:**
+      - Do not generate blurry or distorted text.
+      - Do not mix scripts (e.g., do not mix Latin and Devanagari).
+      - Do not generate photorealistic images; keep it watercolor art style.
+
+      **Character & Setting Details:**
+      - Characters should wear culturally appropriate Indian clothing.
+      - Facial expressions must be expressive and clear.
+      - Backgrounds should be detailed heritage sites or public places.
     `;
 
-    const requestBody = {
-      contents: [{
-        parts: [{
-          text: prompt
-        }]
-      }]
-    };
-
-    const response = await callGeminiAPI(model, requestBody);
+    const response: GenerateContentResponse = await ai.models.generateContent({
+      model: model,
+      contents: prompt,
+      config: {
+        imageConfig: {
+          aspectRatio: "16:9",
+        }
+      }
+    });
 
     // Extract the image from the parts
-    if (response.candidates?.[0]?.content?.parts) {
+    if (response.candidates && response.candidates[0].content.parts) {
       for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData?.data) {
-          const mimeType = part.inlineData.mimeType || 'image/png';
-          return `data:${mimeType};base64,${part.inlineData.data}`;
+        if (part.inlineData && part.inlineData.data) {
+          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
         }
       }
     }
@@ -119,38 +107,35 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
  */
 export const editImagePanel = async (imageBase64: string, instruction: string): Promise<string | null> => {
   try {
-    const model = 'gemini-2.0-flash-exp';
+    const model = 'gemini-2.5-flash-image';
     
     // Strip prefix if present
     const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
-    
-    // Extract mime type from original base64 string
-    const mimeTypeMatch = imageBase64.match(/^data:image\/(png|jpeg|jpg|webp);base64,/);
-    const mimeType = mimeTypeMatch ? `image/${mimeTypeMatch[1]}` : 'image/png';
 
-    const requestBody = {
-      contents: [{
+    const response: GenerateContentResponse = await ai.models.generateContent({
+      model: model,
+      contents: {
         parts: [
-          {
-            text: instruction
-          },
-          {
-            inlineData: {
-              mimeType: mimeType,
-              data: cleanBase64
+            { text: `Edit this comic panel: ${instruction}. Maintain the high-quality watercolor style.` },
+            {
+                inlineData: {
+                    mimeType: 'image/png',
+                    data: cleanBase64
+                }
             }
-          }
         ]
-      }]
-    };
+      },
+      config: {
+        imageConfig: {
+          aspectRatio: "16:9"
+        }
+      }
+    });
 
-    const response = await callGeminiAPI(model, requestBody);
-
-    if (response.candidates?.[0]?.content?.parts) {
+    if (response.candidates && response.candidates[0].content.parts) {
       for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData?.data) {
-          const responseMimeType = part.inlineData.mimeType || 'image/png';
-          return `data:${responseMimeType};base64,${part.inlineData.data}`;
+        if (part.inlineData && part.inlineData.data) {
+          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
         }
       }
     }
@@ -167,49 +152,36 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
  */
 export const generateQuiz = async (language: string): Promise<QuizQuestion[]> => {
   try {
-    const prompt = `Generate 5 multiple-choice quiz questions for children about civic sense at heritage sites and tourist places (e.g., not writing on walls, using dustbins, silence in museums).
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: `Generate 5 multiple-choice quiz questions for children about civic sense at heritage sites and tourist places (e.g., not writing on walls, using dustbins, silence in museums).
       Target Language: ${language}.
       The questions should be simple, fun, and educational.
-      Include a short, funny, or motivating "encouragement" message for getting the answer right.
-      Return the response as a JSON array with this exact structure:
-      [
-        {
-          "question": "question text",
-          "options": ["option1", "option2", "option3", "option4"],
-          "correctAnswer": 0,
-          "encouragement": "encouragement message"
+      Include a short, funny, or motivating "encouragement" message for getting the answer right.`,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              question: { type: Type.STRING },
+              options: { 
+                type: Type.ARRAY,
+                items: { type: Type.STRING }
+              },
+              correctAnswer: { type: Type.INTEGER, description: "Index of the correct option (0-3)" },
+              encouragement: { type: Type.STRING, description: "A short cheerful phrase like 'Awesome!', 'Superb!', etc." }
+            },
+            required: ["question", "options", "correctAnswer", "encouragement"]
+          }
         }
-      ]
-      Return ONLY valid JSON, no other text.`;
-
-    const requestBody = {
-      contents: [{
-        parts: [{
-          text: prompt
-        }]
-      }],
-      generationConfig: {
-        responseMimeType: "application/json"
       }
-    };
+    });
 
-    const response = await callGeminiAPI('gemini-2.0-flash', requestBody);
-    
-    // Extract text from response
-    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (text) {
-      try {
-        // Try to parse as JSON
-        const parsed = JSON.parse(text);
-        if (Array.isArray(parsed)) {
-          return parsed as QuizQuestion[];
-        }
-      } catch (parseError) {
-        console.error("Failed to parse quiz JSON:", parseError);
-      }
+    if (response.text) {
+      return JSON.parse(response.text) as QuizQuestion[];
     }
-    
     return [];
   } catch (error) {
     console.error("Quiz generation error:", error);
