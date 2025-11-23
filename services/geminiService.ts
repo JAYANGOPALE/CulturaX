@@ -2,10 +2,29 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
-// Initialize Gemini Client
-// @ts-ignore - Process env handling
-// Using provided key as fallback if env var is not set
-const apiKey = process.env.API_KEY || 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
+// Helper to safely get API Key in different environments (Vite vs Node/Next)
+const getApiKey = (): string => {
+  // 1. Check Vite environment (Localhost)
+  try {
+    // @ts-ignore
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+      // @ts-ignore
+      return import.meta.env.VITE_API_KEY;
+    }
+  } catch (e) {}
+
+  // 2. Check Node/Process environment
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {}
+
+  // 3. Fallback to hardcoded key provided by user
+  return 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
+};
+
+const apiKey = getApiKey();
 const ai = new GoogleGenAI({ apiKey });
 
 /**
@@ -97,7 +116,7 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
     
     return null;
   } catch (error) {
-    console.error("Image generation error:", error);
+    console.error("Image generation error Details:", error);
     throw error;
   }
 };
