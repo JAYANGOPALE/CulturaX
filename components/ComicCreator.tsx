@@ -94,9 +94,16 @@ export const ComicCreator: React.FC<ComicCreatorProps> = ({
       }
       
       setLoadingState(LoadingState.COMPLETE);
-    } catch (err) {
-      console.error(err);
-      setError(t.errorGen);
+    } catch (err: any) {
+      console.error('Generation error:', err);
+      console.error('Error details:', {
+        message: err?.message,
+        stack: err?.stack,
+        name: err?.name
+      });
+      // Show the actual error message if available, otherwise use generic message
+      const errorMessage = err?.message || t.errorGen;
+      setError(errorMessage);
       setLoadingState(LoadingState.ERROR);
     } finally {
       setTimeout(() => setLoadingState(LoadingState.IDLE), 2000);

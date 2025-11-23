@@ -47,10 +47,21 @@ const getApiKey = (): string => {
 // Create AI instance dynamically to ensure fresh API key on each call
 const getAI = (): GoogleGenAI => {
   const apiKey = getApiKey();
+  console.log('API Key retrieved, length:', apiKey?.length || 0);
+  console.log('API Key starts with:', apiKey?.substring(0, 10) || 'N/A');
+  
   if (!apiKey || apiKey.trim() === '') {
     throw new Error('Gemini API key is missing. Please set VITE_GEMINI_API_KEY in your environment variables.');
   }
-  return new GoogleGenAI({ apiKey });
+  
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+    console.log('GoogleGenAI instance created successfully');
+    return ai;
+  } catch (error) {
+    console.error('Failed to create GoogleGenAI instance:', error);
+    throw error;
+  }
 };
 
 /**
@@ -78,6 +89,11 @@ export const generateCaption = async (scenario: string, language: string): Promi
  */
 export const generateImagePanel = async (scenario: string, caption: string, language: string): Promise<string | null> => {
   try {
+    console.log('Starting image generation...');
+    console.log('Scenario:', scenario);
+    console.log('Caption:', caption);
+    console.log('Language:', language);
+    
     // Using 'gemini-2.5-flash-image' (Nano Banana) as requested for free API access.
     // This model is reliable and generally does not require a billing project like gemini-3-pro.
     const model = 'gemini-2.5-flash-image';
@@ -122,7 +138,11 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
       - Backgrounds should be detailed heritage sites or public places.
     `;
 
+    console.log('Creating AI instance...');
     const ai = getAI();
+    console.log('AI instance created, calling generateContent...');
+    console.log('Model:', model);
+    
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: model,
       contents: prompt,
@@ -132,33 +152,54 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
         }
       }
     });
+    
+    console.log('Response received:', response);
 
     // Extract the image from the parts
-    if (response.candidates && response.candidates[0]?.content?.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData && part.inlineData.data) {
-          return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+    console.log('Extracting image from response...');
+    console.log('Response candidates:', response.candidates);
+    
+    if (response.candidates && response.candidates[0]) {
+      const candidate = response.candidates[0];
+      console.log('First candidate:', candidate);
+      console.log('Finish reason:', candidate.finishReason);
+      
+      if (candidate.finishReason && candidate.finishReason !== 'STOP') {
+        console.error("Image generation finish reason:", candidate.finishReason);
+        throw new Error(`Image generation stopped: ${candidate.finishReason}`);
+      }
+      
+      if (candidate.content?.parts) {
+        console.log('Content parts:', candidate.content.parts);
+        for (const part of candidate.content.parts) {
+          if (part.inlineData && part.inlineData.data) {
+            console.log('Found image data! MIME type:', part.inlineData.mimeType);
+            return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+          }
         }
       }
     }
     
-    // Check for errors in response
-    if (response.candidates && response.candidates[0]?.finishReason) {
-      console.error("Image generation finish reason:", response.candidates[0].finishReason);
-    }
-    
     console.error("No image data found in response");
+    console.error("Full response structure:", JSON.stringify(response, null, 2));
     return null;
   } catch (error: any) {
     console.error("Image generation error Details:", error);
+    console.error("Error stack:", error?.stack);
+    console.error("Error name:", error?.name);
+    console.error("Error message:", error?.message);
+    
     // Provide more helpful error messages
-    if (error?.message?.includes('API key')) {
+    if (error?.message?.includes('API key') || error?.message?.includes('401') || error?.message?.includes('403')) {
       throw new Error('Invalid or missing Gemini API key. Please check your VITE_GEMINI_API_KEY environment variable.');
     }
-    if (error?.message?.includes('quota') || error?.message?.includes('billing')) {
+    if (error?.message?.includes('quota') || error?.message?.includes('billing') || error?.message?.includes('429')) {
       throw new Error('API quota exceeded or billing not enabled. Please check your Gemini API account.');
     }
-    throw new Error(`Image generation failed: ${error?.message || 'Unknown error'}`);
+    if (error?.message?.includes('CORS') || error?.message?.includes('network')) {
+      throw new Error('Network error. Please check your internet connection and try again.');
+    }
+    throw new Error(`Image generation failed: ${error?.message || JSON.stringify(error) || 'Unknown error'}`);
   }
 };
 
