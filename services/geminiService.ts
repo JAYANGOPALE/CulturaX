@@ -4,19 +4,32 @@ import { QuizQuestion } from "../types";
 
 // Helper to safely get API Key in different environments (Vite vs Node/Next)
 const getApiKey = (): string => {
-  // 1. Check Vite environment (Localhost)
+  // 1. Check Vite environment (Localhost) - prefer VITE_GEMINI_API_KEY
   try {
     // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_KEY) {
+    if (typeof import.meta !== 'undefined' && import.meta.env) {
       // @ts-ignore
-      return import.meta.env.VITE_API_KEY;
+      if (import.meta.env.VITE_GEMINI_API_KEY) {
+        // @ts-ignore
+        return import.meta.env.VITE_GEMINI_API_KEY;
+      }
+      // @ts-ignore
+      if (import.meta.env.VITE_API_KEY) {
+        // @ts-ignore
+        return import.meta.env.VITE_API_KEY;
+      }
     }
   } catch (e) {}
 
   // 2. Check Node/Process environment
   try {
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-      return process.env.API_KEY;
+    if (typeof process !== 'undefined' && process.env) {
+      if (process.env.VITE_GEMINI_API_KEY) {
+        return process.env.VITE_GEMINI_API_KEY;
+      }
+      if (process.env.API_KEY) {
+        return process.env.API_KEY;
+      }
     }
   } catch (e) {}
 
