@@ -33,12 +33,13 @@ npx tailwindcss init -p
 2. Add your Google Gemini API key:
 
 ```env
-VITE_API_KEY=your_google_gemini_api_key_here
+VITE_GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
 
 **Important:** 
 - In Vite, environment variables must be prefixed with `VITE_` to be exposed to the browser
 - Never commit your `.env` file to version control (it's already in `.gitignore`)
+- The variable name is `VITE_GEMINI_API_KEY` (not `VITE_API_KEY`)
 
 ### Step 3: Run the Development Server
 
@@ -112,7 +113,7 @@ CulturaX/
 ### Issue: "API Key is missing" error
 - **Solution**: 
   1. Create a `.env` file in the root directory
-  2. Add `VITE_API_KEY=your_api_key_here`
+  2. Add `VITE_GEMINI_API_KEY=your_api_key_here`
   3. Restart the development server
 
 ### Issue: Styles not loading
@@ -130,6 +131,48 @@ CulturaX/
 - **React 19** and **TypeScript** are used for development
 - **Tailwind CSS** is used for styling
 - The app requires an active internet connection for the Google Gemini API
+
+## 🚀 Deployment Guide
+
+### Deploying to Vercel
+
+1. **Push your code to GitHub/GitLab/Bitbucket**
+
+2. **Import your project to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "Add New Project"
+   - Import your repository
+
+3. **Set Environment Variables in Vercel**
+   - In your Vercel project dashboard, go to **Settings** → **Environment Variables**
+   - Add a new variable:
+     - **Name**: `VITE_GEMINI_API_KEY`
+     - **Value**: Your Gemini API key (`AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo`)
+     - **Environment**: Select all (Production, Preview, Development)
+   - Click **Save**
+
+4. **Redeploy**
+   - After adding the environment variable, go to **Deployments**
+   - Click the three dots (⋯) on your latest deployment
+   - Select **Redeploy**
+   - Or push a new commit to trigger a new deployment
+
+5. **Verify**
+   - Check the browser console for: "Using VITE_GEMINI_API_KEY from environment"
+   - Try generating an image to confirm it works
+
+### Important Notes for Deployment:
+- ⚠️ **Environment variables must be set in your deployment platform** (Vercel, Netlify, etc.)
+- ⚠️ **The `.env` file is NOT deployed** - you must set variables in the platform's dashboard
+- ⚠️ **After adding environment variables, you MUST redeploy** for changes to take effect
+- ⚠️ **Variable name must be exactly**: `VITE_GEMINI_API_KEY`
+
+### Other Deployment Platforms
+
+For **Netlify**, **Railway**, or other platforms:
+1. Set the environment variable `VITE_GEMINI_API_KEY` in your platform's settings
+2. Redeploy your application
+3. The variable will be available at build time and runtime
 
 ## 📄 License
 

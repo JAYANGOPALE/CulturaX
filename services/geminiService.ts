@@ -58,6 +58,7 @@ const getAI = (): GoogleGenAI => {
  */
 export const generateCaption = async (scenario: string, language: string): Promise<string> => {
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `You are a friendly teacher teaching children about civic sense at heritage sites and tourist places. 
@@ -121,6 +122,7 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
       - Backgrounds should be detailed heritage sites or public places.
     `;
 
+    const ai = getAI();
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: model,
       contents: prompt,
@@ -132,7 +134,7 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
     });
 
     // Extract the image from the parts
-    if (response.candidates && response.candidates[0].content.parts) {
+    if (response.candidates && response.candidates[0]?.content?.parts) {
       for (const part of response.candidates[0].content.parts) {
         if (part.inlineData && part.inlineData.data) {
           return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
@@ -140,10 +142,23 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
       }
     }
     
+    // Check for errors in response
+    if (response.candidates && response.candidates[0]?.finishReason) {
+      console.error("Image generation finish reason:", response.candidates[0].finishReason);
+    }
+    
+    console.error("No image data found in response");
     return null;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Image generation error Details:", error);
-    throw error;
+    // Provide more helpful error messages
+    if (error?.message?.includes('API key')) {
+      throw new Error('Invalid or missing Gemini API key. Please check your VITE_GEMINI_API_KEY environment variable.');
+    }
+    if (error?.message?.includes('quota') || error?.message?.includes('billing')) {
+      throw new Error('API quota exceeded or billing not enabled. Please check your Gemini API account.');
+    }
+    throw new Error(`Image generation failed: ${error?.message || 'Unknown error'}`);
   }
 };
 
@@ -157,6 +172,7 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
     // Strip prefix if present
     const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
 
+    const ai = getAI();
     const response: GenerateContentResponse = await ai.models.generateContent({
       model: model,
       contents: {
@@ -197,6 +213,7 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
  */
 export const generateQuiz = async (language: string): Promise<QuizQuestion[]> => {
   try {
+    const ai = getAI();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `Generate 5 multiple-choice quiz questions for children about civic sense at heritage sites and tourist places (e.g., not writing on walls, using dustbins, silence in museums).
