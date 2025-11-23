@@ -2,38 +2,36 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
-// Helper to safely get API Key in different environments (Vite vs Node/Next)
+// Helper to safely get API Key from environment variables
 const getApiKey = (): string => {
-  // 1. Check Vite environment (Localhost) - prefer VITE_GEMINI_API_KEY
+  // 1. Primary: Check Vite environment variable VITE_GEMINI_API_KEY (from .env file)
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) {
+    return import.meta.env.VITE_GEMINI_API_KEY;
+  }
+
+  // 2. Fallback: Check for VITE_API_KEY (legacy support)
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_KEY) {
+    return import.meta.env.VITE_API_KEY;
+  }
+
+  // 3. Fallback: Check Node/Process environment (for server-side usage)
   try {
+    // @ts-ignore - process may not be available in browser environment
+    if (typeof process !== 'undefined' && process?.env?.VITE_GEMINI_API_KEY) {
+      // @ts-ignore
+      return process.env.VITE_GEMINI_API_KEY;
+    }
     // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env) {
+    if (typeof process !== 'undefined' && process?.env?.API_KEY) {
       // @ts-ignore
-      if (import.meta.env.VITE_GEMINI_API_KEY) {
-        // @ts-ignore
-        return import.meta.env.VITE_GEMINI_API_KEY;
-      }
-      // @ts-ignore
-      if (import.meta.env.VITE_API_KEY) {
-        // @ts-ignore
-        return import.meta.env.VITE_API_KEY;
-      }
+      return process.env.API_KEY;
     }
-  } catch (e) {}
+  } catch (e) {
+    // process is not available in browser environment
+  }
 
-  // 2. Check Node/Process environment
-  try {
-    if (typeof process !== 'undefined' && process.env) {
-      if (process.env.VITE_GEMINI_API_KEY) {
-        return process.env.VITE_GEMINI_API_KEY;
-      }
-      if (process.env.API_KEY) {
-        return process.env.API_KEY;
-      }
-    }
-  } catch (e) {}
-
-  // 3. Fallback to hardcoded key provided by user
+  // 4. Final fallback: Hardcoded key (should not be needed if .env is configured)
+  console.warn('Warning: Using fallback API key. Please set VITE_GEMINI_API_KEY in your .env file.');
   return 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
 };
 
