@@ -4,20 +4,31 @@ import { QuizQuestion } from "../types";
 
 // Helper to safely get API Key from environment variables
 const getApiKey = (): string => {
+  const FALLBACK_KEY = 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
+  
   // 1. Primary: Check Vite environment variable VITE_GEMINI_API_KEY (from .env file or deployment env vars)
   if (typeof import.meta !== 'undefined' && import.meta.env) {
     const viteKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (viteKey && viteKey.trim() !== '') {
-      console.log('Using VITE_GEMINI_API_KEY from environment');
+    if (viteKey && typeof viteKey === 'string' && viteKey.trim() !== '' && viteKey !== 'undefined') {
+      console.log('✅ Using VITE_GEMINI_API_KEY from environment');
       return viteKey;
     }
     
     // 2. Fallback: Check for VITE_API_KEY (legacy support)
     const legacyKey = import.meta.env.VITE_API_KEY;
-    if (legacyKey && legacyKey.trim() !== '') {
-      console.log('Using VITE_API_KEY from environment');
+    if (legacyKey && typeof legacyKey === 'string' && legacyKey.trim() !== '' && legacyKey !== 'undefined') {
+      console.log('✅ Using VITE_API_KEY from environment');
       return legacyKey;
     }
+    
+    // Debug: Log what we found
+    console.log('🔍 Environment check:', {
+      hasViteKey: !!viteKey,
+      viteKeyType: typeof viteKey,
+      viteKeyValue: viteKey ? viteKey.substring(0, 10) + '...' : 'undefined',
+      hasLegacyKey: !!legacyKey,
+      legacyKeyType: typeof legacyKey
+    });
   }
 
   // 3. Fallback: Check Node/Process environment (for server-side usage)
@@ -25,42 +36,51 @@ const getApiKey = (): string => {
     // @ts-ignore - process may not be available in browser environment
     if (typeof process !== 'undefined' && process?.env) {
       // @ts-ignore
-      if (process.env.VITE_GEMINI_API_KEY && process.env.VITE_GEMINI_API_KEY.trim() !== '') {
-        // @ts-ignore
-        return process.env.VITE_GEMINI_API_KEY;
+      const procKey = process.env.VITE_GEMINI_API_KEY;
+      if (procKey && typeof procKey === 'string' && procKey.trim() !== '') {
+        console.log('✅ Using VITE_GEMINI_API_KEY from process.env');
+        return procKey;
       }
       // @ts-ignore
-      if (process.env.API_KEY && process.env.API_KEY.trim() !== '') {
-        // @ts-ignore
-        return process.env.API_KEY;
+      const procApiKey = process.env.API_KEY;
+      if (procApiKey && typeof procApiKey === 'string' && procApiKey.trim() !== '') {
+        console.log('✅ Using API_KEY from process.env');
+        return procApiKey;
       }
     }
   } catch (e) {
     // process is not available in browser environment
   }
 
-  // 4. Final fallback: Hardcoded key
-  console.warn('Warning: Using fallback API key. Please set VITE_GEMINI_API_KEY in your environment variables.');
-  return 'AIzaSyA3L4WUNI-07L4126RWu6nQEAJvzw19AOo';
+  // 4. Final fallback: Hardcoded key (always use this if env vars not found)
+  console.warn('⚠️ Using fallback API key. Environment variable VITE_GEMINI_API_KEY not found.');
+  console.log('💡 To fix: Set VITE_GEMINI_API_KEY in Vercel dashboard → Settings → Environment Variables');
+  return FALLBACK_KEY;
 };
 
 // Create AI instance dynamically to ensure fresh API key on each call
 const getAI = (): GoogleGenAI => {
   const apiKey = getApiKey();
-  console.log('API Key retrieved, length:', apiKey?.length || 0);
-  console.log('API Key starts with:', apiKey?.substring(0, 10) || 'N/A');
+  console.log('🔑 API Key retrieved, length:', apiKey?.length || 0);
+  console.log('🔑 API Key starts with:', apiKey?.substring(0, 10) || 'N/A');
   
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error('Gemini API key is missing. Please set VITE_GEMINI_API_KEY in your environment variables.');
+  // Validate API key format (Gemini keys typically start with "AIza")
+  if (!apiKey || apiKey.trim() === '' || apiKey.length < 20) {
+    console.error('❌ Invalid API key format');
+    throw new Error('Gemini API key is missing or invalid. Please check your VITE_GEMINI_API_KEY environment variable.');
+  }
+  
+  if (!apiKey.startsWith('AIza')) {
+    console.warn('⚠️ API key does not start with "AIza" - may be invalid');
   }
   
   try {
     const ai = new GoogleGenAI({ apiKey });
-    console.log('GoogleGenAI instance created successfully');
+    console.log('✅ GoogleGenAI instance created successfully');
     return ai;
-  } catch (error) {
-    console.error('Failed to create GoogleGenAI instance:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('❌ Failed to create GoogleGenAI instance:', error);
+    throw new Error(`Failed to initialize Gemini API: ${error?.message || 'Unknown error'}`);
   }
 };
 
@@ -184,22 +204,57 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
     console.error("Full response structure:", JSON.stringify(response, null, 2));
     return null;
   } catch (error: any) {
-    console.error("Image generation error Details:", error);
+    console.error("❌ Image generation error Details:", error);
     console.error("Error stack:", error?.stack);
     console.error("Error name:", error?.name);
     console.error("Error message:", error?.message);
+    console.error("Error code:", error?.code);
+    console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
     
-    // Provide more helpful error messages
-    if (error?.message?.includes('API key') || error?.message?.includes('401') || error?.message?.includes('403')) {
-      throw new Error('Invalid or missing Gemini API key. Please check your VITE_GEMINI_API_KEY environment variable.');
+    // Check for API key related errors
+    const errorMessage = error?.message || '';
+    const errorCode = error?.code || '';
+    const errorStatus = error?.status || error?.statusCode || '';
+    
+    // API authentication errors
+    if (errorMessage.includes('API key') || 
+        errorMessage.includes('401') || 
+        errorMessage.includes('403') ||
+        errorMessage.includes('UNAUTHENTICATED') ||
+        errorCode === '401' || 
+        errorCode === '403' ||
+        errorStatus === 401 ||
+        errorStatus === 403) {
+      console.error('❌ API Authentication Error - Key may be invalid or missing');
+      throw new Error('Invalid or missing Gemini API key. Please check your VITE_GEMINI_API_KEY environment variable in Vercel dashboard.');
     }
-    if (error?.message?.includes('quota') || error?.message?.includes('billing') || error?.message?.includes('429')) {
+    
+    // Quota/billing errors
+    if (errorMessage.includes('quota') || 
+        errorMessage.includes('billing') || 
+        errorMessage.includes('429') ||
+        errorMessage.includes('RESOURCE_EXHAUSTED') ||
+        errorCode === '429' ||
+        errorStatus === 429) {
       throw new Error('API quota exceeded or billing not enabled. Please check your Gemini API account.');
     }
-    if (error?.message?.includes('CORS') || error?.message?.includes('network')) {
+    
+    // CORS/Network errors
+    if (errorMessage.includes('CORS') || 
+        errorMessage.includes('network') ||
+        errorMessage.includes('Failed to fetch') ||
+        errorMessage.includes('NetworkError')) {
       throw new Error('Network error. Please check your internet connection and try again.');
     }
-    throw new Error(`Image generation failed: ${error?.message || JSON.stringify(error) || 'Unknown error'}`);
+    
+    // Model not found or unavailable
+    if (errorMessage.includes('model') || errorMessage.includes('not found') || errorMessage.includes('404')) {
+      throw new Error('The image generation model is not available. Please try again later.');
+    }
+    
+    // Generic error with full details
+    const detailedError = errorMessage || JSON.stringify(error) || 'Unknown error';
+    throw new Error(`Image generation failed: ${detailedError}`);
   }
 };
 
