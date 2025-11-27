@@ -2,60 +2,14 @@
 import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
-// Helper to safely get API Key from environment variables ONLY
-// NO hardcoded keys - must be set in environment variables
+// Direct API key & URL (from your Makersuite / AI Studio)
+// NOTE: This key is now hardcoded – do NOT commit this file to any public repo.
+const API_KEY = 'AIzaSyD8FooJraEXTs0ERttLlB2OymyeU951dpE';
+const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+
+// Simple helper so rest of the code can stay the same
 const getApiKey = (): string => {
-  // 1. Primary: Check Vite environment variable VITE_GEMINI_API_KEY (from .env file or deployment env vars)
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    const viteKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (viteKey && typeof viteKey === 'string' && viteKey.trim() !== '' && viteKey !== 'undefined') {
-      console.log('✅ Using VITE_GEMINI_API_KEY from environment');
-      return viteKey;
-    }
-    
-    // 2. Fallback: Check for VITE_API_KEY (legacy support)
-    const legacyKey = import.meta.env.VITE_API_KEY;
-    if (legacyKey && typeof legacyKey === 'string' && legacyKey.trim() !== '' && legacyKey !== 'undefined') {
-      console.log('✅ Using VITE_API_KEY from environment');
-      return legacyKey;
-    }
-    
-    // Debug: Log what we found
-    console.log('🔍 Environment check:', {
-      hasViteKey: !!viteKey,
-      viteKeyType: typeof viteKey,
-      hasLegacyKey: !!legacyKey,
-      legacyKeyType: typeof legacyKey
-    });
-  }
-
-  // 3. Fallback: Check Node/Process environment (for server-side usage)
-  try {
-    // @ts-ignore - process may not be available in browser environment
-    if (typeof process !== 'undefined' && process?.env) {
-      // @ts-ignore
-      const procKey = process.env.VITE_GEMINI_API_KEY;
-      if (procKey && typeof procKey === 'string' && procKey.trim() !== '') {
-        console.log('✅ Using VITE_GEMINI_API_KEY from process.env');
-        return procKey;
-      }
-      // @ts-ignore
-      const procApiKey = process.env.API_KEY;
-      if (procApiKey && typeof procApiKey === 'string' && procApiKey.trim() !== '') {
-        console.log('✅ Using API_KEY from process.env');
-        return procApiKey;
-      }
-    }
-  } catch (e) {
-    // process is not available in browser environment
-  }
-
-  // NO FALLBACK - Environment variable is required
-  console.error('❌ VITE_GEMINI_API_KEY environment variable is missing!');
-  console.error('💡 Please set VITE_GEMINI_API_KEY in:');
-  console.error('   - Local: .env file in project root');
-  console.error('   - Vercel: Settings → Environment Variables');
-  throw new Error('VITE_GEMINI_API_KEY environment variable is required. Please set it in your .env file (local) or Vercel dashboard (deployment).');
+  return API_KEY;
 };
 
 // Create AI instance dynamically to ensure fresh API key on each call
@@ -91,7 +45,7 @@ export const generateCaption = async (scenario: string, language: string): Promi
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: `You are a friendly teacher teaching children about civic sense at heritage sites and tourist places. 
       Target Language: ${language}.
       Based on this scenario: "${scenario}", write a very short, catchy, and rhyming caption in ${language} (max 10 words) that teaches a lesson (e.g., Don't litter, Keep it quiet). 
@@ -321,7 +275,7 @@ export const generateQuiz = async (language: string): Promise<QuizQuestion[]> =>
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.0-flash',
       contents: `Generate 5 multiple-choice quiz questions for children about civic sense at heritage sites and tourist places (e.g., not writing on walls, using dustbins, silence in museums).
       Target Language: ${language}.
       The questions should be simple, fun, and educational.
