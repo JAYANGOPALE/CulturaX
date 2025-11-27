@@ -1,41 +1,81 @@
-
-import { GoogleGenAI, GenerateContentResponse, Type } from "@google/genai";
 import { QuizQuestion } from "../types";
 
 // Direct API key & URL (from your Makersuite / AI Studio)
 // NOTE: This key is now hardcoded – do NOT commit this file to any public repo.
 const API_KEY = 'AIzaSyD8FooJraEXTs0ERttLlB2OymyeU951dpE';
-const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
-// Simple helper so rest of the code can stay the same
-const getApiKey = (): string => {
-  return API_KEY;
+// Helper to build API URL for different models
+const getApiUrl = (model: string): string => {
+  return `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${API_KEY}`;
 };
 
-// Create AI instance dynamically to ensure fresh API key on each call
-const getAI = (): GoogleGenAI => {
-  const apiKey = getApiKey();
-  console.log('🔑 API Key retrieved, length:', apiKey?.length || 0);
-  console.log('🔑 API Key starts with:', apiKey?.substring(0, 10) || 'N/A');
+// Direct REST API call helper
+const callGeminiAPI = async (model: string, prompt: string, options?: {
+  responseMimeType?: string;
+  responseSchema?: any;
+  imageConfig?: any;
+}): Promise<any> => {
+  const url = getApiUrl(model);
   
-  // Validate API key format (Gemini keys typically start with "AIza")
-  if (!apiKey || apiKey.trim() === '' || apiKey.length < 20) {
-    console.error('❌ Invalid API key format');
-    throw new Error('Gemini API key is missing or invalid. Please check your VITE_GEMINI_API_KEY environment variable.');
+  const requestBody: any = {
+    contents: [{
+      parts: [{
+        text: prompt
+      }]
+    }]
+  };
+
+  // Add generation config if options provided
+  if (options?.responseMimeType || options?.responseSchema) {
+    requestBody.generationConfig = {};
+    if (options.responseMimeType) {
+      requestBody.generationConfig.responseMimeType = options.responseMimeType;
+    }
+    if (options.responseSchema) {
+      requestBody.generationConfig.responseSchema = options.responseSchema;
+    }
   }
   
-  if (!apiKey.startsWith('AIza')) {
-    console.warn('⚠️ API key does not start with "AIza" - may be invalid');
+  // imageConfig goes at the top level, not in generationConfig
+  if (options?.imageConfig) {
+    requestBody.imageConfig = options.imageConfig;
   }
-  
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-    console.log('✅ GoogleGenAI instance created successfully');
-    return ai;
-  } catch (error: any) {
-    console.error('❌ Failed to create GoogleGenAI instance:', error);
-    throw new Error(`Failed to initialize Gemini API: ${error?.message || 'Unknown error'}`);
+
+  console.log(`🔗 Calling Gemini API: ${model}`);
+  console.log(`📝 Prompt length: ${prompt.length} characters`);
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    const errorMessage = errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`;
+    
+    console.error('❌ API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorData
+    });
+
+    // Handle specific error cases
+    if (response.status === 429 || errorMessage.includes('quota') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
+      throw new Error('API quota exceeded or billing not enabled. Please check your Gemini API account at https://aistudio.google.com/apikey');
+    }
+    
+    if (response.status === 401 || response.status === 403 || errorMessage.includes('API key')) {
+      throw new Error('Invalid or missing Gemini API key. Please check your API key at https://aistudio.google.com/apikey');
+    }
+
+    throw new Error(`Gemini API error: ${errorMessage}`);
   }
+
+  const data = await response.json();
+  return data;
 };
 
 /**
@@ -43,17 +83,19 @@ const getAI = (): GoogleGenAI => {
  */
 export const generateCaption = async (scenario: string, language: string): Promise<string> => {
   try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: `You are a friendly teacher teaching children about civic sense at heritage sites and tourist places. 
+    const prompt = `You are a friendly teacher teaching children about civic sense at heritage sites and tourist places. 
       Target Language: ${language}.
       Based on this scenario: "${scenario}", write a very short, catchy, and rhyming caption in ${language} (max 10 words) that teaches a lesson (e.g., Don't litter, Keep it quiet). 
-      Make it fun for kids. Output ONLY the caption.`,
-    });
-    return response.text?.trim() || "Let's protect our heritage together!";
-  } catch (error) {
+      Make it fun for kids. Output ONLY the caption.`;
+
+    const response = await callGeminiAPI('gemini-2.0-flash', prompt);
+    
+    // Extract text from response
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    return text?.trim() || "Let's protect our heritage together!";
+  } catch (error: any) {
     console.error("Caption generation error:", error);
+    // Return fallback caption instead of throwing
     return "Protect our history!";
   }
 };
@@ -112,18 +154,12 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
       - Backgrounds should be detailed heritage sites or public places.
     `;
 
-    console.log('Creating AI instance...');
-    const ai = getAI();
-    console.log('AI instance created, calling generateContent...');
+    console.log('Calling Gemini API for image generation...');
     console.log('Model:', model);
     
-    const response: GenerateContentResponse = await ai.models.generateContent({
-      model: model,
-      contents: prompt,
-      config: {
-        imageConfig: {
-          aspectRatio: "16:9",
-        }
+    const response = await callGeminiAPI(model, prompt, {
+      imageConfig: {
+        aspectRatio: "16:9",
       }
     });
     
@@ -232,29 +268,41 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
     // Strip prefix if present
     const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
 
-    const ai = getAI();
-    const response: GenerateContentResponse = await ai.models.generateContent({
-      model: model,
-      contents: {
+    const url = getApiUrl(model);
+    const requestBody = {
+      contents: [{
         parts: [
-            { text: `Edit this comic panel: ${instruction}. Maintain the high-quality watercolor style.` },
-            {
-                inlineData: {
-                    mimeType: 'image/png',
-                    data: cleanBase64
-                }
+          { text: `Edit this comic panel: ${instruction}. Maintain the high-quality watercolor style.` },
+          {
+            inlineData: {
+              mimeType: 'image/png',
+              data: cleanBase64
             }
+          }
         ]
-      },
-      config: {
-        imageConfig: {
-          aspectRatio: "16:9"
-        }
+      }],
+      imageConfig: {
+        aspectRatio: "16:9"
       }
+    };
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
     });
 
-    if (response.candidates && response.candidates[0].content.parts) {
-      for (const part of response.candidates[0].content.parts) {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.candidates && data.candidates[0].content.parts) {
+      for (const part of data.candidates[0].content.parts) {
         if (part.inlineData && part.inlineData.data) {
           return `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
         }
@@ -273,36 +321,32 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
  */
 export const generateQuiz = async (language: string): Promise<QuizQuestion[]> => {
   try {
-    const ai = getAI();
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: `Generate 5 multiple-choice quiz questions for children about civic sense at heritage sites and tourist places (e.g., not writing on walls, using dustbins, silence in museums).
+    const prompt = `Generate 5 multiple-choice quiz questions for children about civic sense at heritage sites and tourist places (e.g., not writing on walls, using dustbins, silence in museums).
       Target Language: ${language}.
       The questions should be simple, fun, and educational.
-      Include a short, funny, or motivating "encouragement" message for getting the answer right.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              question: { type: Type.STRING },
-              options: { 
-                type: Type.ARRAY,
-                items: { type: Type.STRING }
-              },
-              correctAnswer: { type: Type.INTEGER, description: "Index of the correct option (0-3)" },
-              encouragement: { type: Type.STRING, description: "A short cheerful phrase like 'Awesome!', 'Superb!', etc." }
-            },
-            required: ["question", "options", "correctAnswer", "encouragement"]
-          }
+      Include a short, funny, or motivating "encouragement" message for getting the answer right.
+      
+      Return the response as a JSON array with this exact structure:
+      [
+        {
+          "question": "Question text here",
+          "options": ["Option 1", "Option 2", "Option 3", "Option 4"],
+          "correctAnswer": 0,
+          "encouragement": "Great job!"
         }
-      }
+      ]`;
+
+    const response = await callGeminiAPI('gemini-2.0-flash', prompt, {
+      responseMimeType: "application/json"
     });
 
-    if (response.text) {
-      return JSON.parse(response.text) as QuizQuestion[];
+    // Extract text from response
+    const text = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (text) {
+      // Try to parse JSON - sometimes it's wrapped in markdown code blocks
+      const cleanedText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const parsed = JSON.parse(cleanedText);
+      return parsed as QuizQuestion[];
     }
     return [];
   } catch (error) {
