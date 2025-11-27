@@ -1,12 +1,27 @@
 import { QuizQuestion } from "../types";
 
-// Direct API key & URL (from your Makersuite / AI Studio)
-// NOTE: This key is now hardcoded – do NOT commit this file to any public repo.
-const API_KEY = 'AIzaSyD8FooJraEXTs0ERttLlB2OymyeU951dpE';
+// Get API key from environment variable (VITE_GEMINI_API_KEY from .env file)
+// This is the ONLY source - no hardcoded fallbacks for security
+const getViteGeminiApiKey = (): string => {
+  // Get from Vite environment variables
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GEMINI_API_KEY) {
+    const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (envKey && typeof envKey === 'string' && envKey.trim() !== '' && envKey !== 'undefined') {
+      console.log('✅ Using VITE_GEMINI_API_KEY from .env file');
+      return envKey.trim();
+    }
+  }
+  
+  // No fallback - environment variable is required
+  console.error('❌ VITE_GEMINI_API_KEY is missing from .env file!');
+  console.error('💡 Please add VITE_GEMINI_API_KEY=your_api_key_here to your .env file');
+  throw new Error('VITE_GEMINI_API_KEY environment variable is required. Please set it in your .env file.');
+};
 
 // Helper to build API URL for different models
 const getApiUrl = (model: string): string => {
-  return `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${API_KEY}`;
+  const apiKey = getViteGeminiApiKey();
+  return `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
 };
 
 // Direct REST API call helper
