@@ -28,7 +28,6 @@ const getApiUrl = (model: string): string => {
 const callGeminiAPI = async (model: string, prompt: string, options?: {
   responseMimeType?: string;
   responseSchema?: any;
-  imageConfig?: any;
 }): Promise<any> => {
   const url = getApiUrl(model);
   
@@ -49,11 +48,6 @@ const callGeminiAPI = async (model: string, prompt: string, options?: {
     if (options.responseSchema) {
       requestBody.generationConfig.responseSchema = options.responseSchema;
     }
-  }
-  
-  // imageConfig goes at the top level, not in generationConfig
-  if (options?.imageConfig) {
-    requestBody.imageConfig = options.imageConfig;
   }
 
   console.log(`🔗 Calling Gemini API: ${model}`);
@@ -139,6 +133,7 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
       **Visual Style:**
       - Style: High-fidelity Indian heritage watercolor illustration with fine ink detailing.
       - Resolution: High definition, sharp focus.
+      - Aspect Ratio: 16:9 (wide format).
       - Color Palette: Rich, vibrant, and warm tones suitable for Indian cultural settings.
       - Composition: Professional cinematic angles for each panel.
       
@@ -172,11 +167,7 @@ export const generateImagePanel = async (scenario: string, caption: string, lang
     console.log('Calling Gemini API for image generation...');
     console.log('Model:', model);
     
-    const response = await callGeminiAPI(model, prompt, {
-      imageConfig: {
-        aspectRatio: "16:9",
-      }
-    });
+    const response = await callGeminiAPI(model, prompt);
     
     console.log('Response received:', response);
 
@@ -287,7 +278,7 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
     const requestBody = {
       contents: [{
         parts: [
-          { text: `Edit this comic panel: ${instruction}. Maintain the high-quality watercolor style.` },
+          { text: `Edit this comic panel: ${instruction}. Maintain the high-quality watercolor style and 16:9 aspect ratio.` },
           {
             inlineData: {
               mimeType: 'image/png',
@@ -295,10 +286,7 @@ export const editImagePanel = async (imageBase64: string, instruction: string): 
             }
           }
         ]
-      }],
-      imageConfig: {
-        aspectRatio: "16:9"
-      }
+      }]
     };
 
     const response = await fetch(url, {
